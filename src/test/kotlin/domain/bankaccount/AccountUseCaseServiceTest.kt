@@ -19,7 +19,7 @@ internal class AccountUseCaseServiceTest {
         every { accountRepositoryMock.find(iban) } returns spiedAccount
 
         // when
-        accountUseCaseService.deposit(TransactionCommand(iban, 10.usd()))
+        accountUseCaseService.deposit(DepositCommand(iban, 10.usd()))
 
         // then
         verify(exactly = 1) { spiedAccount.deposit(any()) }
@@ -30,7 +30,7 @@ internal class AccountUseCaseServiceTest {
     fun `should throw exception when deposit in a non existing account`() {
         every { accountRepositoryMock.find(any()) } returns null
 
-        AssertionsForClassTypes.assertThatThrownBy { accountUseCaseService.deposit(TransactionCommand(iban, 10.usd())) }
+        AssertionsForClassTypes.assertThatThrownBy { accountUseCaseService.deposit(DepositCommand(iban, 10.usd())) }
             .isExactlyInstanceOf(DataNotFoundException::class.java)
             .hasMessage("No account with iban $iban")
     }
@@ -41,7 +41,7 @@ internal class AccountUseCaseServiceTest {
         every { accountRepositoryMock.find(iban) } returns spiedAccount
 
         // when
-        accountUseCaseService.withdraw(TransactionCommand(iban, 10.usd()))
+        accountUseCaseService.withdraw(WithdrawCommand(iban, 10.usd()))
 
         // then
         verify(exactly = 1) { spiedAccount.withdraw(any()) }
@@ -52,7 +52,7 @@ internal class AccountUseCaseServiceTest {
     fun `should throw exception when withdraw from a non existing account`() {
         every { accountRepositoryMock.find(any()) } returns null
 
-        AssertionsForClassTypes.assertThatThrownBy { accountUseCaseService.deposit(TransactionCommand(iban, 10.usd())) }
+        AssertionsForClassTypes.assertThatThrownBy { accountUseCaseService.withdraw(WithdrawCommand(iban, 10.usd())) }
             .isExactlyInstanceOf(DataNotFoundException::class.java)
             .hasMessage("No account with iban $iban")
     }
