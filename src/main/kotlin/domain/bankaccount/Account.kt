@@ -8,7 +8,7 @@ class Account(
     val iban: Iban,
     val currency: String,
     var balance: Balance = MoneyAmount(BigDecimal.ZERO, currency),
-    var transaxtions: List<Transaction> = emptyList()
+    var transactions: List<Transaction> = emptyList()
 ) {
 
     init {
@@ -18,7 +18,7 @@ class Account(
     fun deposit(amount: MoneyAmount): Balance {
         validateCurrencies(currency, amount.currency) { "${amount.currency} unmatched with account currency $currency " }
         val depositTransaction = aDeposit(amount = amount, tempBalance = balance.plus(amount))
-        transaxtions = transaxtions + depositTransaction
+        transactions = transactions + depositTransaction
         balance = depositTransaction.tempBalance
         return balance
     }
@@ -26,13 +26,13 @@ class Account(
     fun withdraw(amount: MoneyAmount): Balance {
         validateCurrencies(currency, amount.currency) { "${amount.currency} unmatched with account currency $currency " }
         val withdrawTransaction = aWithdraw(amount = amount, tempBalance = balance.minus(amount))
-        transaxtions = transaxtions + withdrawTransaction
-        balance = balance.minus(amount)
+        transactions = transactions + withdrawTransaction
+        balance = withdrawTransaction.tempBalance
         return balance
     }
 
     fun printUsing(printingStrategy: PrintingStrategy): String =
-        printingStrategy.print(transaxtions)
+        printingStrategy.print(transactions)
 }
 
 typealias Iban = String
