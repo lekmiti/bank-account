@@ -1,15 +1,18 @@
-package domain.bankaccount
+package domain.account
 
+import domain.core.EventsPublisher
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
+import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.AssertionsForClassTypes
 import org.junit.jupiter.api.Test
 
 internal class AccountUseCaseServiceTest {
     private val accountRepositoryMock = mockk<AccountRepository>(relaxed = true)
-    private val accountUseCaseService = AccountUseCaseService(accountRepositoryMock)
+    private val eventsPublisherMock = mockk<EventsPublisher>(relaxed = true)
+    private val accountUseCaseService = AccountUseCaseService(accountRepositoryMock, eventsPublisherMock)
 
     private val iban = "FR7630001007941234567890185"
 
@@ -24,7 +27,8 @@ internal class AccountUseCaseServiceTest {
         // then
         verify(exactly = 1) { spiedAccount.deposit(any()) }
         verify(exactly = 1) { accountRepositoryMock.save(spiedAccount) }
-    }
+        verify(exactly = 1) { eventsPublisherMock.publish(any()) }
+     }
 
     @Test
     fun `should throw exception when deposit in a non existing account`() {
@@ -46,6 +50,7 @@ internal class AccountUseCaseServiceTest {
         // then
         verify(exactly = 1) { spiedAccount.withdraw(any()) }
         verify(exactly = 1) { accountRepositoryMock.save(spiedAccount) }
+        verify(exactly = 1) { eventsPublisherMock.publish(any()) }
     }
 
     @Test

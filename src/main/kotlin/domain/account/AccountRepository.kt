@@ -1,4 +1,4 @@
-package domain.bankaccount
+package domain.account
 
 interface AccountRepository {
     fun find(iban: Iban): Account?

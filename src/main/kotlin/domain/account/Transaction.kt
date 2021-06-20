@@ -1,4 +1,4 @@
-package domain.bankaccount
+package domain.account
 
 import java.time.LocalDateTime
 

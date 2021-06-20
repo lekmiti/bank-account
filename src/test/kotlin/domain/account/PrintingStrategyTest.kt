@@ -1,7 +1,7 @@
-package domain.bankaccount
+package domain.account
 
-import domain.bankaccount.Transaction.Companion.aDeposit
-import domain.bankaccount.Transaction.Companion.aWithdraw
+import domain.account.Transaction.Companion.aDeposit
+import domain.account.Transaction.Companion.aWithdraw
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime

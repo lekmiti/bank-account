@@ -1,4 +1,4 @@
-package domain.bankaccount
+package domain.account
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.google.gson.Gson

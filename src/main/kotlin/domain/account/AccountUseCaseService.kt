@@ -1,4 +1,6 @@
-package domain.bankaccount
+package domain.account
+
+import domain.core.EventsPublisher
 
 
 interface AccountUseCase {
@@ -11,20 +13,27 @@ data class DepositCommand(val iban: Iban, val amount: MoneyAmount)
 data class WithdrawCommand(val iban: Iban, val amount: MoneyAmount)
 data class PrintCommand(val iban: Iban, val printingStrategy: PrintingStrategy)
 
-class AccountUseCaseService(private val repository: AccountRepository) : AccountUseCase {
+class AccountUseCaseService(
+    override val accountRepository: AccountRepository,
+    private val eventsPublisher: EventsPublisher
+) : AccountUseCase, AccountHook {
 
     @Synchronized
     override fun deposit(depositCommand: DepositCommand): Account =
         withExistingAccount(depositCommand.iban) {
             it.deposit(depositCommand.amount)
-            repository.save(it)
+            accountRepository.save(it)
+            eventsPublisher.publish(it.events())
+            it
         }
 
     @Synchronized
     override fun withdraw(withdrawCommand: WithdrawCommand): Account =
         withExistingAccount(withdrawCommand.iban) {
             it.withdraw(withdrawCommand.amount)
-            repository.save(it)
+            accountRepository.save(it)
+            eventsPublisher.publish(it.events())
+            it
         }
 
     override fun printUsing(printCommand: PrintCommand): String =
@@ -32,10 +41,5 @@ class AccountUseCaseService(private val repository: AccountRepository) : Account
             it.printUsing(printCommand.printingStrategy)
         }
 
-
-    private fun <T> withExistingAccount(iban: Iban, body: (account: Account) -> T): T {
-        val account = repository.find(iban)
-        return account?.let { body(it) } ?: throw DataNotFoundException("No account with iban $iban")
-    }
 
 }

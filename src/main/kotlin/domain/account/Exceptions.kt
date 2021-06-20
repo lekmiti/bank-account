@@ -1,9 +1,8 @@
-package domain.bankaccount
+package domain.account
 
 data class ConflictCurrencyException(override val message: String) : RuntimeException(message)
 
 data class DataNotFoundException(override val message: String) : RuntimeException(message)
-
 
 fun validateCurrencies(
     currency: String,

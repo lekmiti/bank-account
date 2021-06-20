@@ -1,4 +1,4 @@
-package domain.bankaccount
+package domain.account
 
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy
