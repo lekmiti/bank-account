@@ -5,14 +5,13 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.AssertionsForClassTypes
 import org.junit.jupiter.api.Test
 
-internal class AccountUseCaseServiceTest {
+internal class AccountAppServiceTest {
     private val accountRepositoryMock = mockk<AccountRepository>(relaxed = true)
     private val eventsPublisherMock = mockk<EventsPublisher>(relaxed = true)
-    private val accountUseCaseService = AccountUseCaseService(accountRepositoryMock, eventsPublisherMock)
+    private val accountUseCaseService = AccountAppService(accountRepositoryMock, eventsPublisherMock)
 
     private val iban = "FR7630001007941234567890185"
 
@@ -60,5 +59,17 @@ internal class AccountUseCaseServiceTest {
         AssertionsForClassTypes.assertThatThrownBy { accountUseCaseService.withdraw(WithdrawCommand(iban, 10.usd())) }
             .isExactlyInstanceOf(DataNotFoundException::class.java)
             .hasMessage("No account with iban $iban")
+    }
+
+    @Test
+    fun `should print account statement`() {
+        val spiedAccount = spyk(Account(iban = iban, currency = "USD"))
+        every { accountRepositoryMock.find(iban) } returns spiedAccount
+
+        // when
+        accountUseCaseService.printUsing(PrintCommand(iban, PrintingStrategy.JsonFormatPrinter))
+
+        // then
+        verify(exactly = 1) { spiedAccount.printUsing(PrintingStrategy.JsonFormatPrinter)}
     }
 }

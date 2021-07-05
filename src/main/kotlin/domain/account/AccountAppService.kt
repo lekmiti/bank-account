@@ -13,7 +13,7 @@ data class DepositCommand(val iban: Iban, val amount: MoneyAmount)
 data class WithdrawCommand(val iban: Iban, val amount: MoneyAmount)
 data class PrintCommand(val iban: Iban, val printingStrategy: PrintingStrategy)
 
-class AccountUseCaseService(
+class AccountAppService(
     override val accountRepository: AccountRepository,
     private val eventsPublisher: EventsPublisher
 ) : AccountUseCase, AccountHook {

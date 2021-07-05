@@ -27,7 +27,7 @@ data class Transaction(
     }
 }
 
-enum class OperationType(value: String) {
+enum class OperationType(val value: String) {
     A_WITHDRAW("withdraw"),
     A_DEPOSIT("deposit")
 }
